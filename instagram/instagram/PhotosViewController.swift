@@ -9,17 +9,23 @@
 import UIKit
 import AFNetworking
 
-class PhotosViewController: UIViewController {
+class PhotosViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
-    var dataFromRequest: NSDictionary!
+    var dataFromRequest: [NSDictionary]?
+    
+    @IBOutlet weak var tableView: UITableView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-        
+        tableView.delegate = self
+        tableView.dataSource = self
         let clientId = "e05c462ebd86446ea48a5af73769b602"
         let url = NSURL(string:"https://api.instagram.com/v1/media/popular?client_id=\(clientId)")
-        let request = NSURLRequest(URL: url!)
+        let request = NSURLRequest(
+            URL: url!,
+            cachePolicy: NSURLRequestCachePolicy.ReloadIgnoringLocalCacheData,
+            timeoutInterval: 10)
         let session = NSURLSession(
             configuration: NSURLSessionConfiguration.defaultSessionConfiguration(),
             delegate:nil,
@@ -31,8 +37,8 @@ class PhotosViewController: UIViewController {
                 if let data = dataOrNil {
                     if let responseDictionary = try! NSJSONSerialization.JSONObjectWithData(
                         data, options:[]) as? NSDictionary {
-                            self.dataFromRequest = responseDictionary
-                            print("response: \(responseDictionary)")
+                            self.dataFromRequest = responseDictionary["data"] as? [NSDictionary]
+                            self.tableView.reloadData()
                     }
                 }
         });
@@ -44,7 +50,27 @@ class PhotosViewController: UIViewController {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+    func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+        if let profile = dataFromRequest{
+            return profile.count
+        }
+        return 0
+    }
+    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 1
+    }
+    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell{
+        //print(self.dataFromRequest)
+        let cell = tableView.dequeueReusableCellWithIdentifier("PhotoCel", forIndexPath: indexPath) as! CustomTableViewCell
+        let profile = self.dataFromRequest![indexPath.section]
+        print(profile["user"]!["profile_picture"])
+    
+//        print(profile)
 
+        let imageURL = profile["user"]!["profile_picture"] as! String
+        cell.imageBanner.setImageWithURL(NSURL(string: imageURL)!)
+        return cell
+    }
 
 }
 
