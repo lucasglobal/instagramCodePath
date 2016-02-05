@@ -63,12 +63,17 @@ class PhotosViewController: UIViewController, UITableViewDataSource, UITableView
         //print(self.dataFromRequest)
         let cell = tableView.dequeueReusableCellWithIdentifier("PhotoCel", forIndexPath: indexPath) as! CustomTableViewCell
         let profile = self.dataFromRequest![indexPath.section]
-        print(profile["user"]!["profile_picture"])
+        print(profile)
     
 //        print(profile)
 
-        let imageURL = profile["user"]!["profile_picture"] as! String
-        cell.imageBanner.setImageWithURL(NSURL(string: imageURL)!)
+        let imageURLProfile = profile["user"]!["profile_picture"] as! String
+        let imageURLPicture = profile["images"]!["standard_resolution"]!!["url"] as! String
+
+        cell.imageBanner.setImageWithURL(NSURL(string: imageURLPicture)!)
+        cell.imageProfile.setImageWithURL(NSURL(string: imageURLProfile)!)
+        cell.labelProfileName.text = profile["user"]!["full_name"] as? String
+
         return cell
     }
 

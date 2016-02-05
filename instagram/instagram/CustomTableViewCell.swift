@@ -11,7 +11,9 @@ import AFNetworking
 
 class CustomTableViewCell: UITableViewCell {
 
+    @IBOutlet weak var labelProfileName: UILabel!
     @IBOutlet weak var imageBanner: UIImageView!
+    @IBOutlet weak var imageProfile: UIImageView!
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
