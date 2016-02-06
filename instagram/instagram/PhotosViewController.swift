@@ -114,9 +114,20 @@ class PhotosViewController: UIViewController, UITableViewDataSource, UITableView
                 if let data = dataOrNil {
                     if let responseDictionary = try! NSJSONSerialization.JSONObjectWithData(
                         data, options:[]) as? NSDictionary {
-                            self.dataFromRequest = responseDictionary["data"] as? [NSDictionary]
+                            if(self.dataFromRequest != nil){
+                                let newData = responseDictionary["data"] as? [NSDictionary]
+                                
+                                //append all objects in the old arrray
+                                for object in newData!{
+                                    self.dataFromRequest?.append(object)
+                                }
+                                //self.dataFromRequest?.append(responseDictionary)
+                            }
+                            else{
+                                self.dataFromRequest = responseDictionary["data"] as? [NSDictionary]
+                            }
                             self.isMoreDataLoading = false
-                            self.loadingMoreView!.stopAnimating()
+                            self.loadingMoreView?.stopAnimating()
                             self.tableView.reloadData()
                     }
                 }
