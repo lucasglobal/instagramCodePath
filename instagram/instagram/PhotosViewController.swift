@@ -76,6 +76,9 @@ class PhotosViewController: UIViewController, UITableViewDataSource, UITableView
 
         return cell
     }
-
+    
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        print("details screen")
+    }
 }
 
