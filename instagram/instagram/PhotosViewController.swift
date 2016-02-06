@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import AFNetworking
 
 class PhotosViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
@@ -60,12 +59,10 @@ class PhotosViewController: UIViewController, UITableViewDataSource, UITableView
         return 1
     }
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell{
-        //print(self.dataFromRequest)
         let cell = tableView.dequeueReusableCellWithIdentifier("PhotoCel", forIndexPath: indexPath) as! CustomTableViewCell
         let profile = self.dataFromRequest![indexPath.section]
         print(profile)
     
-//        print(profile)
 
         let imageURLProfile = profile["user"]!["profile_picture"] as! String
         let imageURLPicture = profile["images"]!["standard_resolution"]!!["url"] as! String
@@ -76,9 +73,16 @@ class PhotosViewController: UIViewController, UITableViewDataSource, UITableView
 
         return cell
     }
-    
+    //get rid of the gray selection when touching cell
+    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        tableView.deselectRowAtIndexPath(indexPath, animated: true)
+    }
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        print("details screen")
+        let detailVC = segue.destinationViewController as! DetailViewController
+        let indexPath = tableView.indexPathForCell(sender as! UITableViewCell)
+        let profile = self.dataFromRequest![indexPath!.section]
+        detailVC.urlPhoto = NSURL(string:profile["images"]!["standard_resolution"]!!["url"] as! String)!
+
     }
 }
 

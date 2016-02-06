@@ -10,9 +10,12 @@ import UIKit
 
 class DetailViewController: UIViewController {
 
+    @IBOutlet weak var imageBanner: UIImageView!
+    var urlPhoto: NSURL = NSURL()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        self.imageBanner.setImageWithURL(urlPhoto)
         // Do any additional setup after loading the view.
     }
 
