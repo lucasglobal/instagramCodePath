@@ -13,7 +13,8 @@ class PhotosViewController: UIViewController, UITableViewDataSource, UITableView
     var dataFromRequest: [NSDictionary]?
     var isMoreDataLoading: Bool = false
     var loadingMoreView: InfiniteScrollActivityView?
-    
+    let refreshControl = UIRefreshControl()
+
     @IBOutlet weak var tableView: UITableView!
     
     override func viewDidLoad() {
@@ -33,6 +34,9 @@ class PhotosViewController: UIViewController, UITableViewDataSource, UITableView
         var insets = tableView.contentInset
         insets.bottom += InfiniteScrollActivityView.defaultHeight
         tableView.contentInset = insets
+        refreshControl.addTarget(self, action: "refreshTopScreen", forControlEvents: UIControlEvents.ValueChanged)
+        tableView.insertSubview(refreshControl, atIndex: 0)
+        
     }
 
     override func didReceiveMemoryWarning() {
@@ -129,11 +133,45 @@ class PhotosViewController: UIViewController, UITableViewDataSource, UITableView
                             self.isMoreDataLoading = false
                             self.loadingMoreView?.stopAnimating()
                             self.tableView.reloadData()
+                            self.refreshControl.endRefreshing()
+
                     }
                 }
         });
         task.resume()
 
+    }
+    func refreshTopScreen(){
+        
+        let clientId = "e05c462ebd86446ea48a5af73769b602"
+        let url = NSURL(string:"https://api.instagram.com/v1/media/popular?client_id=\(clientId)")
+        let request = NSURLRequest(
+            URL: url!,
+            cachePolicy: NSURLRequestCachePolicy.ReloadIgnoringLocalCacheData,
+            timeoutInterval: 10)
+        let session = NSURLSession(
+            configuration: NSURLSessionConfiguration.defaultSessionConfiguration(),
+            delegate:nil,
+            delegateQueue:NSOperationQueue.mainQueue()
+        )
+        
+        let task : NSURLSessionDataTask = session.dataTaskWithRequest(request,
+            completionHandler: { (dataOrNil, response, error) in
+                if let data = dataOrNil {
+                    if let responseDictionary = try! NSJSONSerialization.JSONObjectWithData(
+                        data, options:[]) as? NSDictionary {
+                            self.dataFromRequest = responseDictionary["data"] as? [NSDictionary]
+                            
+                            self.isMoreDataLoading = false
+                            self.loadingMoreView?.stopAnimating()
+                            self.tableView.reloadData()
+                            self.refreshControl.endRefreshing()
+                            
+                    }
+                }
+        });
+        task.resume()
+        
     }
 }
 
