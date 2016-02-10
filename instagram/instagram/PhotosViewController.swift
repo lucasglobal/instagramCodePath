@@ -8,7 +8,7 @@
 
 import UIKit
 
-class PhotosViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate {
+class PhotosViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate{
 
     var dataFromRequest: [NSDictionary]?
     var isMoreDataLoading: Bool = false
@@ -140,6 +140,9 @@ class PhotosViewController: UIViewController, UITableViewDataSource, UITableView
         });
         task.resume()
 
+    }
+    func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
+        print("asdsad")
     }
     func refreshTopScreen(){
         
